@@ -3,6 +3,7 @@ import { View, Text } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 
 import SplashScreen from '../screens/SplashScreen';
+import MainScreen from '../screens/MainScreen';
 
 const RootStack = createStackNavigator();
 
@@ -13,9 +14,7 @@ const splashScreen = ({ navigation }) => {
 }
 const mainScreen = ({ navigation }) => {
   return (
-    <View>
-
-    </View>
+    <MainScreen />
   );
 }
 

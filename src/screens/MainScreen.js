@@ -1,21 +1,26 @@
 import React, { useEffect, useState } from 'react';
-import { SafeAreaView, View, Text, ActivityIndicator, StyleSheet, PermissionsAndroid, Image } from 'react-native';
+import { SafeAreaView, View, ScrollView, Text, TouchableOpacity, ActivityIndicator, StyleSheet, PermissionsAndroid, Image } from 'react-native';
+import { Header, Icon } from 'react-native-elements';
 import { useNavigation } from '@react-navigation/native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { connect } from 'react-redux';
 
 
 //Store funcs
-import { create_menu } from '../store/actions/actionCreators';
+import { add_item_to_cart, create_menu, increment_quantity, decrement_quantity } from '../store/actions/actionCreators';
 
 const mapStateToProps = state => {
   return {
     menuItems: state.menu.menuItems,
+    cartItems: state.cart.cartItems,
   }
 }
 const mapDispatchToProps = dispatch => {
   return {
     create_menu: (menu) => dispatch(create_menu(menu)),
+    add_item_to_cart: (item) => dispatch(add_item_to_cart(item)),
+    increment_quantity: (itemname, quantity) => dispatch(increment_quantity(itemname, quantity)),
+    decrement_quantity: (itemname, quantity) => dispatch(decrement_quantity(itemname, quantity)),
   }
 }
 
@@ -36,16 +41,74 @@ function MainScreen(props) {
 
   }, []);
 
-  const renderMenuItems = props.menuItems.map((menuCategory) => {
-
+  const renderMenuCats = props.menuItems.map((menuCategory, index) => {
+    console.log('menuCategory: ', menuCategory);
     return (
-      <Text>Hello</Text>
+      <View key={index.toString()}>
+        <View style={{ borderWidth: 0.5, paddingVertical: '4%' }}>
+          <Text style={{ fontSize: wp(5), color: 'grey' }}>Category {index.toString()}</Text>
+        </View>
+        <View>
+          {
+            menuCategory.map((item, itemIndex) => {
+              return (
+                <View style={{ borderBottomWidth: 0.5, borderBottomColor: 'grey', paddingVertical: '3%', paddingHorizontal: '2%', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }} key={itemIndex.toString()}>
+                  <View style={{ justifyContent: 'center', flex: 4 }}>
+                    <Text style={{ fontSize: wp(5), fontWeight: 'bold' }}>{item.name}</Text>
+                    <Text style={{ color: 'grey', fontSize: wp(4) }}>$ {item.price}</Text>
+                  </View>
+                  <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
+                    <View style={{ justifyContent: 'center', alignItems: 'center', borderColor: '#f55e00', borderWidth: wp(0.5), borderRadius: wp(5), width: wp(20), height: wp(8) }}>
+                      {props.cartItems.find((cartItem) => cartItem.name === item.name)
+                        ? <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                            <TouchableOpacity onPress={() => props.decrement_quantity(item.name, 1)}>
+                              <Icon
+                                name='minus'
+                                type='ant-design'
+                                color='#f55e00'
+                              />
+                            </TouchableOpacity>
+                          </View>
+                          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ color: '#f55e00' }}>{props.cartItems.find((cartItem) => cartItem.name === item.name).quantity}</Text>
+                          </View>
+                          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                            <TouchableOpacity onPress={() => props.increment_quantity(item.name, 1)}>
+                              <Icon
+                                name='plus'
+                                type='ant-design'
+                                color='#f55e00'
+                              />
+                            </TouchableOpacity>
+                          </View>
+                        </View>
+                        : <TouchableOpacity onPress={() => props.add_item_to_cart({ ...item, quantity: 1 })}>
+                          <Text style={{ fontWeight: 'bold', color: '#f55e00', fontSize: wp(5) }}>ADD</Text>
+                        </TouchableOpacity>
+                      }
+                    </View>
+                  </View>
+                </View>
+              );
+            })
+          }
+        </View>
+      </View >
     );
   });
 
   return (
-    <SafeAreaView>
-      {renderMenuItems}
+    <SafeAreaView style={{ flex: 1 }}>
+      <Header
+        centerComponent={<View>
+          <Text style={{ fontSize: wp(5), color: 'white', fontWeight: 'bold' }}>MENU</Text>
+        </View>}
+      />
+
+      <ScrollView contentContainerStyle={{ paddingBottom: '5%' }}>
+        {renderMenuCats}
+      </ScrollView>
     </SafeAreaView>
   );
 }

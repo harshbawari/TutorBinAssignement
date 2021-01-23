@@ -11,13 +11,6 @@ export const menuReducer = (state = {
       }
       break;
 
-    case actionTypes.ADD_ITEM:
-      return {
-        ...state,
-        menuItems: [...state.menuItems, action.payload]
-      }
-      break;
-
     default: return state;
   }
 }

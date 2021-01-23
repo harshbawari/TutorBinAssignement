@@ -44,6 +44,13 @@ function MainScreen(props) {
     props.create_menu(menu);
     get_best_sellers();
 
+    const listen = navigation.addListener('focus', () => {
+      props.create_menu(menu);
+      get_best_sellers();
+    });
+
+    return listen;
+
   }, []);
 
   const handle_place_order = async () => {
@@ -109,9 +116,17 @@ function MainScreen(props) {
               return (
                 <View style={{ borderBottomWidth: 0.5, borderBottomColor: 'grey', paddingVertical: '3%', paddingHorizontal: '2%', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }} key={itemIndex.toString()}>
                   <View style={{ justifyContent: 'center', flex: 4, flexDirection: 'row' }}>
-                    <View>
+                    <View style={{ flex: 1 }}>
                       <Text style={{ fontSize: wp(5), fontWeight: 'bold' }}>{item.name}</Text>
                       <Text style={{ color: 'grey', fontSize: wp(4) }}>$ {item.price}</Text>
+                    </View>
+                    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                      {bestSellers.find((best) => best.name.name === item.name)
+                        ? <View style={{ backgroundColor: 'orange', padding: '4%', borderRadius: wp(4) }}>
+                          <Text style={{ color: 'white', fontSize: wp(4) }}>Bestseller</Text>
+                        </View>
+                        : null
+                      }
                     </View>
                   </View>
                   <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>

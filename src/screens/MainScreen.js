@@ -28,6 +28,8 @@ const mapDispatchToProps = dispatch => {
 function MainScreen(props) {
   const navigation = useNavigation();
 
+  const [bestSellers, setBestSellers] = useState([]);
+
   const [menu, setMenu] = useState({
     cat1: [{ name: 'XYZ', price: 100, instock: true }, { name: 'ABC', price: 934, instock: false }, { name: 'OTR', price: 945, instock: true }, { name: 'SLG', price: 343, instock: true }, { name: 'KGN', price: 342, instock: true }, { name: 'GDS', price: 234, instock: true }, { name: 'KNL', price: 934, instock: true }, { name: 'GLM', price: 320, instock: true }, { name: 'DKF', price: 394, instock: false }, { name: 'VFS', price: 854, instock: true },],
     cat2: [{ name: 'NA', price: 124, instock: true }, { name: 'DS', price: 953, instock: true }, { name: 'HF', price: 100, instock: true }, { name: 'FJ', price: 583, instock: true }, { name: 'LS', price: 945, instock: false }, { name: 'TR', price: 394, instock: true }, { name: 'PD', price: 35, instock: true }, { name: 'AL', price: 125, instock: true }, { name: 'TK', price: 129, instock: true }, { name: 'PG', price: 294, instock: true },],
@@ -40,6 +42,7 @@ function MainScreen(props) {
   useEffect(() => {
 
     props.create_menu(menu);
+    get_best_sellers();
 
   }, []);
 
@@ -67,6 +70,33 @@ function MainScreen(props) {
 
   }
 
+  const get_best_sellers = async () => {
+    let pastOrders = [];
+
+    await AsyncStorage.getItem('order_history')
+      .then((res) => {
+        pastOrders = JSON.parse(res);
+      })
+      .then(() => {
+        pastOrders.sort((a, b) => {
+          return a.quantity > b.quantity
+        });
+
+        setBestSellers([{
+          name: pastOrders[pastOrders.length - 1]
+        },
+        {
+          name: pastOrders[pastOrders.length - 2]
+        },
+        {
+          name: pastOrders[pastOrders.length - 3]
+        }]);
+      })
+      .catch((error) => {
+        console.log('Error in get_best_sellers: ', error);
+      });
+  }
+
   const renderMenuCats = props.menuItems.map((menuCategory, index) => {
     return (
       <View key={index.toString()}>
@@ -78,9 +108,11 @@ function MainScreen(props) {
             menuCategory.map((item, itemIndex) => {
               return (
                 <View style={{ borderBottomWidth: 0.5, borderBottomColor: 'grey', paddingVertical: '3%', paddingHorizontal: '2%', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }} key={itemIndex.toString()}>
-                  <View style={{ justifyContent: 'center', flex: 4 }}>
-                    <Text style={{ fontSize: wp(5), fontWeight: 'bold' }}>{item.name}</Text>
-                    <Text style={{ color: 'grey', fontSize: wp(4) }}>$ {item.price}</Text>
+                  <View style={{ justifyContent: 'center', flex: 4, flexDirection: 'row' }}>
+                    <View>
+                      <Text style={{ fontSize: wp(5), fontWeight: 'bold' }}>{item.name}</Text>
+                      <Text style={{ color: 'grey', fontSize: wp(4) }}>$ {item.price}</Text>
+                    </View>
                   </View>
                   <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
                     <View style={{ justifyContent: 'center', alignItems: 'center', borderColor: '#f55e00', borderWidth: wp(0.5), borderRadius: wp(5), width: wp(20), height: wp(8) }}>

@@ -1,4 +1,5 @@
 import * as actionTypes from './actionTypes';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 export const create_menu = (menu) => dispatch => {
@@ -46,7 +47,9 @@ export const post_decrement_quantity = (itemname, quantity) => ({
   }
 });
 
-export const clear_cart = () => dispatch => {
+export const clear_cart = () => async dispatch => {
+  await AsyncStorage.removeItem('current_cart_order');
+
   return dispatch(post_clear_cart());
 }
 

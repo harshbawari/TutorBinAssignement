@@ -29,6 +29,24 @@ function OrderHistory(props) {
       });
   }
 
+  const renderOrderHistory = orderHistory.map((order, index) => {
+
+    return (
+      <View style={{ borderBottomWidth: 0.5, borderBottomColor: 'grey', paddingVertical: '3%', paddingHorizontal: '2%', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }} key={index.toString()}>
+        <View style={{ justifyContent: 'center', flex: 4 }}>
+          <Text style={{ fontSize: wp(5), fontWeight: 'bold' }}>{order.name}</Text>
+          <Text style={{ color: 'grey', fontSize: wp(4) }}>$ {order.price}</Text>
+        </View>
+        <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
+          <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: wp(20), height: wp(8) }}>
+            <Text>Quantity: </Text>
+            <Text>{order.quantity}</Text>
+          </View>
+        </View>
+      </View>
+    );
+  });
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <Header
@@ -38,6 +56,7 @@ function OrderHistory(props) {
       />
 
       <ScrollView contentContainerStyle={{ paddingBottom: '30%' }}>
+        {renderOrderHistory}
       </ScrollView>
 
     </SafeAreaView>

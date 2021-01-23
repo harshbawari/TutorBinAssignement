@@ -33,10 +33,10 @@ export const cartReducer = (state = {
       return {
         ...state,
         cartItems: state.cartItems.filter((cartItem) => {
-          if (cartItem.name === action.payload.name && cartItem.quantity > 1)
-            return true;
-          else
+          if (cartItem.name === action.payload.name && cartItem.quantity < 2)
             return false;
+          else
+            return true;
         }).map((cartItem) => {
           if (cartItem.name === action.payload.name) {
             return {

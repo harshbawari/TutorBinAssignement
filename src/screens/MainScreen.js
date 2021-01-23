@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { SafeAreaView, View, ScrollView, Text, TouchableOpacity, ActivityIndicator, StyleSheet, PermissionsAndroid, Image } from 'react-native';
+import { SafeAreaView, View, ScrollView, Text, TouchableOpacity, ActivityIndicator, StyleSheet, PermissionsAndroid, Image, Alert } from 'react-native';
 import { Header, Icon } from 'react-native-elements';
 import { useNavigation } from '@react-navigation/native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { connect } from 'react-redux';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 //Store funcs
@@ -25,6 +26,7 @@ const mapDispatchToProps = dispatch => {
 }
 
 function MainScreen(props) {
+  const navigation = useNavigation();
 
   const [menu, setMenu] = useState({
     cat1: [{ name: 'XYZ', price: 100, instock: true }, { name: 'ABC', price: 934, instock: false }, { name: 'OTR', price: 945, instock: true }, { name: 'SLG', price: 343, instock: true }, { name: 'KGN', price: 342, instock: true }, { name: 'GDS', price: 234, instock: true }, { name: 'KNL', price: 934, instock: true }, { name: 'GLM', price: 320, instock: true }, { name: 'DKF', price: 394, instock: false }, { name: 'VFS', price: 854, instock: true },],
@@ -41,8 +43,31 @@ function MainScreen(props) {
 
   }, []);
 
+  const handle_place_order = async () => {
+    console.log('Placing Order', props.cartItems);
+    if (props.cartItems.length < 1) {
+      Alert.alert('OOPS!', 'Please add items!');
+      return;
+    }
+
+    await AsyncStorage.removeItem('current_cart_order')
+      .then(async () => {
+        await AsyncStorage.setItem('current_cart_order', JSON.stringify(props.cartItems))
+          .catch((error) => {
+            throw (error);
+          })
+      })
+      .then(() => {
+        navigation.navigate('cart');
+      })
+      .catch((error) => {
+        Alert.alert('OOPS!', error.toString());
+        console.log('Error: ', error);
+      });
+
+  }
+
   const renderMenuCats = props.menuItems.map((menuCategory, index) => {
-    console.log('menuCategory: ', menuCategory);
     return (
       <View key={index.toString()}>
         <View style={{ borderWidth: 0.5, paddingVertical: '4%' }}>
@@ -109,6 +134,16 @@ function MainScreen(props) {
       <ScrollView contentContainerStyle={{ paddingBottom: '5%' }}>
         {renderMenuCats}
       </ScrollView>
+
+      <View style={{ flex: 1, position: 'absolute', bottom: '2%', alignSelf: 'center', width: wp(80), height: wp(20), borderRadius: wp(3) }}>
+        <View style={{ margin: '4%', justifyContent: 'center', alignItems: 'center' }}>
+          <TouchableOpacity onPress={() => handle_place_order()}>
+            <View style={{ justifyContent: 'center', alignItems: 'center', borderRadius: wp(5), height: wp(10), width: wp(50), backgroundColor: 'orange' }}>
+              <Text style={{ fontSize: wp(6), color: 'white', fontWeight: 'bold' }}>Place Order</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+      </View>
     </SafeAreaView>
   );
 }

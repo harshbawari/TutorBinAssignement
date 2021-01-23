@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
-import { add_item_to_cart, create_menu, increment_quantity, decrement_quantity } from '../store/actions/actionCreators';
+import { add_item_to_cart, create_menu, increment_quantity, decrement_quantity, clear_cart } from '../store/actions/actionCreators';
 
 const mapStateToProps = state => {
   return {
@@ -21,6 +21,7 @@ const mapDispatchToProps = dispatch => {
     add_item_to_cart: (item) => dispatch(add_item_to_cart(item)),
     increment_quantity: (itemname, quantity) => dispatch(increment_quantity(itemname, quantity)),
     decrement_quantity: (itemname, quantity) => dispatch(decrement_quantity(itemname, quantity)),
+    clear_cart: () => dispatch(clear_cart()),
   }
 }
 
@@ -79,7 +80,8 @@ function CartScreen(props) {
           })
       })
       .then(() => {
-        navigation.navigate('orderHistory');
+        props.clear_cart();
+        navigation.replace('orderHistory');
       })
       .catch((error) => {
         Alert.alert('OOPS!', error.toString());

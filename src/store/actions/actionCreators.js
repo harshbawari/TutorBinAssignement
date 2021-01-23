@@ -45,3 +45,12 @@ export const post_decrement_quantity = (itemname, quantity) => ({
     quantity: quantity
   }
 });
+
+export const clear_cart = () => dispatch => {
+  return dispatch(post_clear_cart());
+}
+
+export const post_clear_cart = () => ({
+  type: actionTypes.CLEAR_CART,
+  payload: null
+});

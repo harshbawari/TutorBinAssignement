@@ -84,33 +84,37 @@ function MainScreen(props) {
                   </View>
                   <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
                     <View style={{ justifyContent: 'center', alignItems: 'center', borderColor: '#f55e00', borderWidth: wp(0.5), borderRadius: wp(5), width: wp(20), height: wp(8) }}>
-                      {props.cartItems.find((cartItem) => cartItem.name === item.name)
-                        ? <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                            <TouchableOpacity onPress={() => props.decrement_quantity(item.name, 1)}>
-                              <Icon
-                                name='minus'
-                                type='ant-design'
-                                color='#f55e00'
-                              />
-                            </TouchableOpacity>
+                      {item.instock
+                        ? props.cartItems.find((cartItem) => cartItem.name === item.name)
+                          ? <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                              <TouchableOpacity onPress={() => props.decrement_quantity(item.name, 1)}>
+                                <Icon
+                                  name='minus'
+                                  type='ant-design'
+                                  color='#f55e00'
+                                />
+                              </TouchableOpacity>
+                            </View>
+                            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                              <Text style={{ color: '#f55e00' }}>{props.cartItems.find((cartItem) => cartItem.name === item.name).quantity}</Text>
+                            </View>
+                            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                              <TouchableOpacity onPress={() => props.increment_quantity(item.name, 1)}>
+                                <Icon
+                                  name='plus'
+                                  type='ant-design'
+                                  color='#f55e00'
+                                />
+                              </TouchableOpacity>
+                            </View>
                           </View>
-                          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                            <Text style={{ color: '#f55e00' }}>{props.cartItems.find((cartItem) => cartItem.name === item.name).quantity}</Text>
-                          </View>
-                          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                            <TouchableOpacity onPress={() => props.increment_quantity(item.name, 1)}>
-                              <Icon
-                                name='plus'
-                                type='ant-design'
-                                color='#f55e00'
-                              />
-                            </TouchableOpacity>
-                          </View>
+                          : <TouchableOpacity onPress={() => props.add_item_to_cart({ ...item, quantity: 1 })}>
+                            <Text style={{ fontWeight: 'bold', color: '#f55e00', fontSize: wp(5) }}>ADD</Text>
+                          </TouchableOpacity>
+                        : <View>
+                          <Text style={{ color: 'grey' }}>Out of Stock!</Text>
                         </View>
-                        : <TouchableOpacity onPress={() => props.add_item_to_cart({ ...item, quantity: 1 })}>
-                          <Text style={{ fontWeight: 'bold', color: '#f55e00', fontSize: wp(5) }}>ADD</Text>
-                        </TouchableOpacity>
                       }
                     </View>
                   </View>
